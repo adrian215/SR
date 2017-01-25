@@ -1,7 +1,6 @@
 package com.sr.tasks.handler;
 
 import com.sr.common.model.Task;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
@@ -34,18 +33,18 @@ class LocalTaskHandler implements TaskHandler {
         return scriptResult;
     }
 
-    private String executeFileScript(String fileName) throws IOException, InterruptedException {
-        Runtime runtime = Runtime.getRuntime();
-        Process exec = runtime.exec("./" + fileName);
-        exec.waitFor();
-        return IOUtils.toString(exec.getInputStream(), defaultCharset());
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private File createFile(String fileName) throws IOException {
         File temp = new File(fileName);
         temp.createNewFile();
         temp.setExecutable(true);
         return temp;
+    }
+
+    private String executeFileScript(String fileName) throws IOException, InterruptedException {
+        Runtime runtime = Runtime.getRuntime();
+        Process exec = runtime.exec("./" + fileName);
+        exec.waitFor();
+        return IOUtils.toString(exec.getInputStream(), defaultCharset());
     }
 }
