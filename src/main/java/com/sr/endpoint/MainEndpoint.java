@@ -1,4 +1,4 @@
-package com.sr.rest;
+package com.sr.endpoint;
 
 import com.sr.common.model.Task;
 import com.sr.tasks.TaskExecuteService;
