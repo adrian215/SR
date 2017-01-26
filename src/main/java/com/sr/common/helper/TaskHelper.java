@@ -9,7 +9,7 @@ public class TaskHelper {
     public static final String LOCAL_SOURCE = "CLI";
 
     public boolean isLocalTask(Task task) {
-        return task.getSource().toUpperCase().startsWith(LOCAL_SOURCE);
+        return task.getSrc().toUpperCase().startsWith(LOCAL_SOURCE);
     }
 
     public boolean isRemoteTask(Task task) {

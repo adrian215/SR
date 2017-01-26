@@ -1,7 +1,9 @@
-package com.sr.tasks.handler;
+package com.sr.tasks.input;
 
 import com.sr.common.model.Task;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -11,10 +13,13 @@ import static java.nio.charset.Charset.defaultCharset;
 import static org.apache.commons.io.FileUtils.write;
 
 @Component
-class LocalTaskExecutor implements TaskExecutor {
+class LocalPythonTaskExecutor implements PythonTaskExecutor {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void executeTask(Task task, int localTaskId) {
+        log.info("Execute task locally {}", task.getId());
+        log.debug("Task info: {}", task);
         try {
             String scriptResult = executeScript(task.getScript());
             //todo obsluzyc odpowiedz

@@ -1,7 +1,7 @@
 package com.sr.tasks;
 
 import com.sr.common.model.Task;
-import com.sr.tasks.handler.InputTaskHandler;
+import com.sr.tasks.input.InputTaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ public class TaskExecuteQueueService {
 
     @Scheduled(fixedRate = 1000)
     private void runTaskFromQueue() {
-        log.debug("Polling tasks queue");
         Task task;
         while ((task = tasks.poll()) != null) {
             inputTaskHandler.executeTask(task);

@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Optional.empty;
 
 @Component
@@ -44,23 +45,23 @@ public class CLIEndpoint implements CommandLineRunner {
     @Async
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Uruchomiono CLI");
+        String input;
+        log.info("\n CLI started\n Enter command: <timeout>;<path to script file>");
         Scanner scanner = new Scanner(System.in);
 
-        while (true) {
-            String input = scanner.next();
-
-            if ("exit".equals(input))
-                return;
-
+        while (!"exit".equals(input = scanner.next())) {
             Matcher matcher = pattern.matcher(input);
+
             if (matcher.find()) {
-                int timeout = Integer.parseInt(matcher.group(1));
+                int timeout = parseInt(matcher.group(1));
                 String path = matcher.group(2);
+
                 readTaskFromFile(path, timeout)
                         .ifPresent(taskExecuteQueueService::addTask);
             }
         }
+
+        log.info("CLI closed");
     }
 
     private Optional<Task> readTaskFromFile(String filePath, int timeout) {
@@ -69,10 +70,12 @@ public class CLIEndpoint implements CommandLineRunner {
 
             Task task = Task.builder()
                     .script(script)
-                    .source(TaskHelper.LOCAL_SOURCE)
-                    .hopsLeft(appConfig.maxHops)
-                    .taskIdAtSource(taskIdAtSource)
+                    .src(TaskHelper.LOCAL_SOURCE)
+                    .hops_left(appConfig.maxHops)
+                    .id(taskIdAtSource)
                     .build();
+            log.info("Task {} received by CLI", task);
+
             return Optional.of(task);
 
         } catch (IOException e) {

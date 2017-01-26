@@ -1,7 +1,7 @@
-package com.sr.tasks.handler;
+package com.sr.tasks.input;
 
 import com.sr.common.model.Task;
 
-public interface TaskExecutor {
+public interface PythonTaskExecutor {
     void executeTask(Task task, int localTaskId);
 }
