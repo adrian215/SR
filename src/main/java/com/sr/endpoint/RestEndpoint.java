@@ -2,11 +2,12 @@ package com.sr.endpoint;
 
 import com.sr.common.model.Task;
 import com.sr.tasks.TaskExecuteQueueService;
-import com.sr.tasks.output.OutputTaskHandler;
+import com.sr.tasks.OutputTaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -47,5 +48,10 @@ public class RestEndpoint {
                 taskResponse()
                         .withId(id)
                         .andResult(result));
+    }
+
+    public int getServerStatus() {
+        //todo check how many tasks is executed locally and send this information back
+        throw new NotImplementedException();
     }
 }

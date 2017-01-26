@@ -1,9 +1,10 @@
-package com.sr.tasks.input;
+package com.sr.tasks;
 
 import com.sr.common.helper.IdGenerator;
 import com.sr.common.helper.TaskHelper;
 import com.sr.common.model.Task;
 import com.sr.tasks.cache.TaskCache;
+import com.sr.tasks.execute.PythonTaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class InputTaskHandler {
         int localId = idGenerator.getId();
         taskCache.put(localId, task, REMOTE);
 
+        //todo check if task should be executed on local machine or should be sent to remote server
         if (possibleToSendToNextServer(task)) {
             taskCache.put(localId, task, REMOTE);
             remotePythonTaskExecutor.executeTask(task, localId);

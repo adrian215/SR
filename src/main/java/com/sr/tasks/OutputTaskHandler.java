@@ -1,4 +1,4 @@
-package com.sr.tasks.output;
+package com.sr.tasks;
 
 import com.sr.common.model.TaskResponse;
 import com.sr.tasks.cache.TaskCache;

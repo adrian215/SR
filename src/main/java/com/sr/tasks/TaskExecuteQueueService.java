@@ -1,7 +1,6 @@
 package com.sr.tasks;
 
 import com.sr.common.model.Task;
-import com.sr.tasks.input.InputTaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
