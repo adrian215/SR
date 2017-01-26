@@ -1,12 +1,10 @@
 package com.sr.endpoint;
 
-import com.sr.common.helper.IdGenerator;
 import com.sr.common.helper.TaskHelper;
 import com.sr.common.model.Task;
 import com.sr.config.AppConfig;
 import com.sr.tasks.TaskExecuteQueueService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.CharSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +28,6 @@ public class CLIEndpoint implements CommandLineRunner {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Pattern pattern = Pattern.compile("([0-9]*);(.*)");
-    private final int taskIdAtSource = -1;
 
     private AppConfig appConfig;
     private TaskExecuteQueueService taskExecuteQueueService;
@@ -72,7 +68,7 @@ public class CLIEndpoint implements CommandLineRunner {
                     .script(script)
                     .src(TaskHelper.LOCAL_SOURCE)
                     .hops_left(appConfig.maxHops)
-                    .id(taskIdAtSource)
+                    .id(TaskHelper.LOCALLY_STARTED_TASK_ID)
                     .build();
             log.info("Task {} received by CLI", task);
 

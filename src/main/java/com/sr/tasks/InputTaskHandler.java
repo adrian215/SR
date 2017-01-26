@@ -43,6 +43,7 @@ public class InputTaskHandler {
         log.info("Starting execute task with id {}", task.getId());
 
         int localId = idGenerator.getId();
+        log.info("Task {} has local id {}", task.getId(), localId);
         taskCache.put(localId, task, REMOTE);
 
         //todo check if task should be executed on local machine or should be sent to remote server

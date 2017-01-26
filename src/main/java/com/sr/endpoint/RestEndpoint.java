@@ -42,7 +42,8 @@ public class RestEndpoint {
 
         String result = resultMap.get("result");
         String senderInfo = String.format("%s:%s", request.getRemoteAddr(), request.getRemotePort());
-        log.info("Got task response with id: {} and result: {} from: {}", id, result, senderInfo);
+        log.info("Got task response with id: {}  from: {}", id, senderInfo);
+        log.debug("Task result: {}", result);
 
         outputTaskHandler.processTaskResponse(
                 taskResponse()

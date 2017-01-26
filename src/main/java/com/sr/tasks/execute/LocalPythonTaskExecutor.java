@@ -1,14 +1,18 @@
 package com.sr.tasks.execute;
 
 import com.sr.common.model.Task;
+import com.sr.common.model.TaskResponse;
+import com.sr.tasks.OutputTaskHandler;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 
+import static com.sr.common.model.TaskResponse.Builder.taskResponse;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.apache.commons.io.FileUtils.write;
 
@@ -16,14 +20,25 @@ import static org.apache.commons.io.FileUtils.write;
 class LocalPythonTaskExecutor implements PythonTaskExecutor {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private OutputTaskHandler outputTaskHandler;
+
+    @Autowired
+    LocalPythonTaskExecutor(OutputTaskHandler outputTaskHandler) {
+        this.outputTaskHandler = outputTaskHandler;
+    }
+
     @Override
     public void executeTask(Task task, int localTaskId) {
-        log.info("Execute task locally {}", task.getId());
+        log.info("Execute task locally {}", localTaskId);
         log.debug("Task info: {}", task);
         try {
             String scriptResult = executeScript(task.getScript());
-            //todo obsluzyc odpowiedz
-            System.out.println(scriptResult);
+
+            outputTaskHandler.processTaskResponse(
+                    taskResponse()
+                            .withId(localTaskId)
+                            .andResult(scriptResult));
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

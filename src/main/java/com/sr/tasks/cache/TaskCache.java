@@ -23,4 +23,8 @@ public class TaskCache {
                         .build()
                 );
     }
+
+    public Task get(int id) {
+        return handledTasks.get(id).getTask();
+    }
 }

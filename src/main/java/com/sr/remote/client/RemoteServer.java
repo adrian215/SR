@@ -17,4 +17,10 @@ public interface RemoteServer {
             @Query("timeout") int timeout,
             @Body Map<String, String> script);
 
+    @POST("task_result")
+    Call<Void> sendResponseToServer(
+            @Query("id") int id,
+            @Body Map<String, String> result
+    );
+
 }

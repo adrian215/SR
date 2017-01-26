@@ -27,7 +27,7 @@ class RemotePythonTaskExecutor implements PythonTaskExecutor {
 
     @Override
     public void executeTask(Task task, int localTaskId) {
-        log.info("Remote execution task {}", task.getId());
+        log.info("Remote execution task {}", localTaskId);
         log.debug("Task info: {}", task);
 
         task.setHops_left(task.getHops_left() - 1);
@@ -37,9 +37,9 @@ class RemotePythonTaskExecutor implements PythonTaskExecutor {
                     task.getHops_left(), task.getTimeout(),
                     singletonMap("content", task.getScript()))
                     .execute();
-            log.info("Task {} sent successfully to remote server with local id {}", task.getId(), localTaskId);
+            log.info("Task {} sent successfully to remote server", localTaskId);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Cannot execute task on remote server", e);
         }
     }
 }
