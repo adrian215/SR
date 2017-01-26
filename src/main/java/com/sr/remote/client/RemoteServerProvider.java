@@ -1,4 +1,4 @@
-package com.sr.endpoint.client;
+package com.sr.remote.client;
 
 import com.sr.config.AppConfig;
 import org.springframework.context.annotation.Bean;

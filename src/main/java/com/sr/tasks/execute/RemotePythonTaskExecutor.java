@@ -2,7 +2,7 @@ package com.sr.tasks.execute;
 
 import com.sr.common.model.Task;
 import com.sr.config.AppConfig;
-import com.sr.endpoint.client.RemoteServer;
+import com.sr.remote.client.RemoteServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
