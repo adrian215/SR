@@ -25,6 +25,8 @@ public class TaskCache {
     }
 
     public Task get(int id) {
-        return handledTasks.get(id).getTask();
+        TaskCacheRecord record = handledTasks.get(id);
+        handledTasks.remove(id);
+        return record.getTask();
     }
 }
