@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskHelper {
 
-    private static final String LOCAL_SOURCE = "CLI";
+    public static final String LOCAL_SOURCE = "CLI";
 
     public boolean isLocalTask(Task task) {
         return task.getSource().toUpperCase().startsWith(LOCAL_SOURCE);
