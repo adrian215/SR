@@ -11,7 +11,7 @@ import static java.nio.charset.Charset.defaultCharset;
 import static org.apache.commons.io.FileUtils.write;
 
 @Component
-class LocalTaskHandler implements TaskHandler {
+class LocalTaskExecutor implements TaskExecutor {
 
     @Override
     public void executeTask(Task task) {
