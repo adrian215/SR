@@ -1,6 +1,6 @@
 package com.sr.tasks.handler;
 
-import com.sr.common.helper.TaskHelper;
+import com.sr.common.helper.IdGenerator;
 import com.sr.common.model.Task;
 import com.sr.tasks.cache.TaskCache;
 import com.sr.tasks.cache.TaskExecuteDestiny;
@@ -11,14 +11,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import static com.sr.tasks.cache.TaskExecuteDestiny.LOCAL;
 import static com.sr.tasks.cache.TaskExecuteDestiny.REMOTE;
 
 @Component
 public class InputTaskHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private TaskHelper taskHelper;
+    private IdGenerator idGenerator;
     private TaskCache taskCache;
 
     @Autowired
@@ -30,22 +29,26 @@ public class InputTaskHandler {
     private TaskExecutor remoteTaskExecutor;
 
     @Autowired
-    public InputTaskHandler(TaskHelper taskHelper, TaskCache taskCache) {
-        this.taskHelper = taskHelper;
+    public InputTaskHandler(IdGenerator idGenerator, TaskCache taskCache) {
+        this.idGenerator = idGenerator;
         this.taskCache = taskCache;
     }
 
     @Async
     public void executeTask(Task task) {
-        if (taskHelper.isRemoteTask(task) && possibleToSendToNextServer(task)) {
-            log.info("Executing task remotely {}", task);
-            taskCache.put(task, REMOTE);
-            remoteTaskExecutor.executeTask(task);
-        } else {
-            log.info("Executing task locally {}", task);
-            taskCache.put(task, LOCAL);
-            localTaskExecutor.executeTask(task);
-        }
+        int localId = idGenerator.getId();
+        taskCache.put(localId, task, REMOTE);
+        remoteTaskExecutor.executeTask(task, localId);
+
+//        if (taskHelper.isRemoteTask(task) && possibleToSendToNextServer(task)) {
+//            log.info("Executing task remotely {}", task);
+//            taskCache.put(task, REMOTE);
+//            remoteTaskExecutor.executeTask(task);
+//        } else {
+//            log.info("Executing task locally {}", task);
+//            taskCache.put(task, LOCAL);
+//            localTaskExecutor.executeTask(task);
+//        }
     }
 
     private boolean possibleToSendToNextServer(Task task) {

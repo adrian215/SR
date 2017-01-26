@@ -14,9 +14,10 @@ import static org.apache.commons.io.FileUtils.write;
 class LocalTaskExecutor implements TaskExecutor {
 
     @Override
-    public void executeTask(Task task) {
+    public void executeTask(Task task, int localTaskId) {
         try {
             String scriptResult = executeScript(task.getScript());
+            //todo obsluzyc odpowiedz
             System.out.println(scriptResult);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

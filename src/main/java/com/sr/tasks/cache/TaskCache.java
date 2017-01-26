@@ -11,11 +11,11 @@ import static java.time.LocalTime.now;
 @Component
 public class TaskCache {
 
-    private Map<String, TaskCacheRecord> handledTasks = new ConcurrentHashMap<>();
+    private Map<Integer, TaskCacheRecord> handledTasks = new ConcurrentHashMap<>();
 
-    public void put(Task task, TaskExecuteDestiny executeDestiny) {
+    public void put(int taskId, Task task, TaskExecuteDestiny executeDestiny) {
         handledTasks.put(
-                task.getSource(),
+                taskId,
                 TaskCacheRecord.builder().
                         task(task)
                         .time(now())

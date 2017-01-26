@@ -30,15 +30,14 @@ public class CLIEndpoint implements CommandLineRunner {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Pattern pattern = Pattern.compile("([0-9]*);(.*)");
+    private final int taskIdAtSource = -1;
 
     private AppConfig appConfig;
-    private IdGenerator idGenerator;
     private TaskExecuteQueueService taskExecuteQueueService;
 
     @Autowired
-    public CLIEndpoint(AppConfig appConfig, IdGenerator idGenerator, TaskExecuteQueueService taskExecuteQueueService) {
+    public CLIEndpoint(AppConfig appConfig, TaskExecuteQueueService taskExecuteQueueService) {
         this.appConfig = appConfig;
-        this.idGenerator = idGenerator;
         this.taskExecuteQueueService = taskExecuteQueueService;
     }
 
@@ -46,12 +45,14 @@ public class CLIEndpoint implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Uruchomiono CLI");
-
         Scanner scanner = new Scanner(System.in);
+
         while (true) {
             String input = scanner.next();
+
             if ("exit".equals(input))
                 return;
+
             Matcher matcher = pattern.matcher(input);
             if (matcher.find()) {
                 int timeout = Integer.parseInt(matcher.group(1));
@@ -65,13 +66,15 @@ public class CLIEndpoint implements CommandLineRunner {
     private Optional<Task> readTaskFromFile(String filePath, int timeout) {
         try {
             String script = FileUtils.readFileToString(new File(filePath), Charset.defaultCharset());
+
             Task task = Task.builder()
                     .script(script)
                     .source(TaskHelper.LOCAL_SOURCE)
                     .hopsLeft(appConfig.maxHops)
-                    .taskIdAtSource(idGenerator.getId())
+                    .taskIdAtSource(taskIdAtSource)
                     .build();
             return Optional.of(task);
+
         } catch (IOException e) {
             log.error("Cannot read script from file {}", filePath);
             return empty();
