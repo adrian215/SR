@@ -2,6 +2,7 @@ package com.sr.remote.client;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -22,5 +23,8 @@ public interface RemoteServer {
             @Query("id") int id,
             @Body Map<String, String> result
     );
+
+    @GET("status")
+    Call<Integer> checkQueueStatus();
 
 }

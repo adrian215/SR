@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 
@@ -19,12 +21,10 @@ public class OutputTaskHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private TaskCache taskCache;
-    private RemoteServer remoteServer;
 
     @Autowired
-    public OutputTaskHandler(TaskCache taskCache, RemoteServer remoteServer) {
+    public OutputTaskHandler(TaskCache taskCache) {
         this.taskCache = taskCache;
-        this.remoteServer = remoteServer;
     }
 
     public void processTaskResponse(TaskResponse response) {
@@ -35,7 +35,11 @@ public class OutputTaskHandler {
         } else {
             log.info("Sending task {} response to remote server with id {}", response.getId(), task.getId());
             try {
-                remoteServer.sendResponseToServer(task.getId(), singletonMap("result", response.getResult())).execute();
+                RemoteServer senderInterface = new Retrofit.Builder()
+                        .addConverterFactory(JacksonConverterFactory.create())
+                        .baseUrl("http://" + task.getSrc())
+                        .build().create(RemoteServer.class);
+                senderInterface.sendResponseToServer(task.getId(), singletonMap("result", response.getResult())).execute();
             } catch (IOException e) {
                 log.error("Cannot send task response to server", e);
             }

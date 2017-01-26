@@ -3,6 +3,7 @@ package com.sr.tasks;
 import com.sr.common.helper.IdGenerator;
 import com.sr.common.helper.TaskHelper;
 import com.sr.common.model.Task;
+import com.sr.remote.ping.CyclicPinger;
 import com.sr.tasks.cache.TaskCache;
 import com.sr.tasks.execute.PythonTaskExecutor;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class InputTaskHandler {
     private IdGenerator idGenerator;
     private TaskCache taskCache;
     private TaskHelper taskHelper;
+    private CyclicPinger cyclicPinger;
 
     @Autowired
     @Qualifier("localPythonTaskExecutor")
@@ -32,10 +34,11 @@ public class InputTaskHandler {
     private PythonTaskExecutor remotePythonTaskExecutor;
 
     @Autowired
-    public InputTaskHandler(IdGenerator idGenerator, TaskCache taskCache, TaskHelper taskHelper) {
+    public InputTaskHandler(IdGenerator idGenerator, TaskCache taskCache, TaskHelper taskHelper, CyclicPinger cyclicPinger) {
         this.idGenerator = idGenerator;
         this.taskCache = taskCache;
         this.taskHelper = taskHelper;
+        this.cyclicPinger = cyclicPinger;
     }
 
     @Async
@@ -46,8 +49,7 @@ public class InputTaskHandler {
         log.info("Task {} has local id {}", task.getId(), localId);
         taskCache.put(localId, task, REMOTE);
 
-        //todo check if task should be executed on local machine or should be sent to remote server
-        if (possibleToSendToNextServer(task)) {
+        if (possibleToSendToNextServer(task) && cyclicPinger.getRemoteServerQueue() < taskCache.getNumberOfProcessingTasks()) {
             taskCache.put(localId, task, REMOTE);
             remotePythonTaskExecutor.executeTask(task, localId);
         } else {

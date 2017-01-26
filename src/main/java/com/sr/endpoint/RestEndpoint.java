@@ -3,6 +3,7 @@ package com.sr.endpoint;
 import com.sr.common.model.Task;
 import com.sr.tasks.TaskExecuteQueueService;
 import com.sr.tasks.OutputTaskHandler;
+import com.sr.tasks.cache.TaskCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class RestEndpoint {
 
     private TaskExecuteQueueService taskExecuteQueueService;
     private OutputTaskHandler outputTaskHandler;
+    private TaskCache taskCache;
 
     @Autowired
-    public RestEndpoint(TaskExecuteQueueService taskExecuteQueueService, OutputTaskHandler outputTaskHandler) {
+    public RestEndpoint(TaskExecuteQueueService taskExecuteQueueService, OutputTaskHandler outputTaskHandler, TaskCache taskCache) {
         this.taskExecuteQueueService = taskExecuteQueueService;
         this.outputTaskHandler = outputTaskHandler;
+        this.taskCache = taskCache;
     }
 
     @RequestMapping(method = POST, value = "/task_input")
@@ -51,8 +54,8 @@ public class RestEndpoint {
                         .andResult(result));
     }
 
+    @RequestMapping("/status")
     public int getServerStatus() {
-        //todo check how many tasks is executed locally and send this information back
-        throw new NotImplementedException();
+        return taskCache.getNumberOfProcessingTasks();
     }
 }
