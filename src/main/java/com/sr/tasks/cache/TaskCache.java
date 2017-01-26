@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.time.Instant.now;
@@ -27,17 +28,21 @@ public class TaskCache {
         );
     }
 
-    public Task get(int id) {
+    public Optional<Task> get(int id) {
         TaskCacheRecord record = handledTasks.get(id);
         handledTasks.remove(id);
-        return record.getTask();
+        if (record != null)
+            return Optional.of(record.getTask());
+        else
+            return Optional.empty();
+
     }
 
     public void disposeOldTasks() {
         handledTasks.forEach((i, t) -> {
-            if (t.getTime().getEpochSecond() + inSeconds(t.getTask().getTimeout()) > now().getEpochSecond()) {
+            if (t.getTime().getEpochSecond() + t.getTask().getTimeout() < now().getEpochSecond()) {
                 handledTasks.remove(i);
-                log.info("Task {} removed beacuse of timetou", i);
+                log.info("Task {} removed beacuse of timetout", i);
             }
         });
     }

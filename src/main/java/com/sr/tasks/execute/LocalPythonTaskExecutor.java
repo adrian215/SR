@@ -64,7 +64,7 @@ class LocalPythonTaskExecutor implements PythonTaskExecutor {
 
     private String executeFileScript(String fileName) throws IOException, InterruptedException {
         Runtime runtime = Runtime.getRuntime();
-        Process exec = runtime.exec("./" + fileName);
+        Process exec = runtime.exec("python " + fileName);
         exec.waitFor();
         return IOUtils.toString(exec.getInputStream(), defaultCharset());
     }

@@ -28,21 +28,26 @@ public class OutputTaskHandler {
     }
 
     public void processTaskResponse(TaskResponse response) {
-        Task task = taskCache.get(response.getId());
+        taskCache.get(response.getId())
+                .ifPresent(task -> {
+                    if (task.getId() == TaskHelper.LOCALLY_STARTED_TASK_ID) {
+                        log.info("Script {} result: {}", response.getId(), response.getResult());
+                    } else {
+                        log.info("Sending task {} response to remote server with id {}", response.getId(), task.getId());
+                        sendResponseToServer(response, task);
+                    }
+                });
+    }
 
-        if (task.getId() == TaskHelper.LOCALLY_STARTED_TASK_ID) {
-            log.info("Script {} result: {}", response.getId(), response.getResult());
-        } else {
-            log.info("Sending task {} response to remote server with id {}", response.getId(), task.getId());
-            try {
-                RemoteServer senderInterface = new Retrofit.Builder()
-                        .addConverterFactory(JacksonConverterFactory.create())
-                        .baseUrl("http://" + task.getSrc())
-                        .build().create(RemoteServer.class);
-                senderInterface.sendResponseToServer(task.getId(), singletonMap("result", response.getResult())).execute();
-            } catch (IOException e) {
-                log.error("Cannot send task response to server", e);
-            }
+    private void sendResponseToServer(TaskResponse response, Task task) {
+        try {
+            RemoteServer senderInterface = new Retrofit.Builder()
+                    .addConverterFactory(JacksonConverterFactory.create())
+                    .baseUrl("http://" + task.getSrc())
+                    .build().create(RemoteServer.class);
+            senderInterface.sendResponseToServer(task.getId(), singletonMap("result", response.getResult())).execute();
+        } catch (IOException e) {
+            log.error("Cannot send task response to server", e);
         }
     }
 }

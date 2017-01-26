@@ -69,6 +69,7 @@ public class CLIEndpoint implements CommandLineRunner {
                     .src(TaskHelper.LOCAL_SOURCE)
                     .hops_left(appConfig.maxHops)
                     .id(TaskHelper.LOCALLY_STARTED_TASK_ID)
+                    .timeout(timeout)
                     .build();
             log.info("Task {} received by CLI", task);
 
